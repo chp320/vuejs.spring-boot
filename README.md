@@ -21,9 +21,9 @@ cd front-end
 npm run serve
 ```
 
-### spring-boot, vue.js 통합 컴파일
+### spring-boot, vue.js 통합 컴파일 (이전 컴파일 내역 clean)
 ```
-mvn install
+mvn clean install
 ```
 
 ##### 메모
