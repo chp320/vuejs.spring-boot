@@ -1,6 +1,7 @@
 // For authoring Nightwatch tests, see
 // https://nightwatchjs.org/guide
 
+/*
 module.exports = {
   'default e2e tests': browser => {
     browser
@@ -16,6 +17,17 @@ module.exports = {
     browser
       .openHomepage()
       .assert.elementPresent('.hello')
+      .end()
+  }
+}
+*/
+
+module.exports = {
+  'login test' : function (browser) {
+    browser
+      .url(process.env.VUE_DEV_SERVER_URL + 'login')
+      .waitForElementVisible('#app', 1000)
+      .assert.containsText('h1', 'TaskAgile')
       .end()
   }
 }
