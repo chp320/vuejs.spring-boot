@@ -22,5 +22,5 @@ npm run serve
 ```
 ##### 메모
 - npm run serve
-  -> vue-cli-service serve 명령어를 호출해서 개발 서버를 실행
-
+  - vue-cli-service serve 명령어를 호출해서 개발 서버를 실행
+- vue.js 의 jest 활용한 테스트 진행 시 ``npm test`` 명령어 수행 시 ~ package.json 오류 발생하는 경우 => 해당 명령어는 package.json 이 위치한 경로에서 수행되어야 함
