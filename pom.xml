@@ -79,7 +79,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<version>3.3.0</version>
+				<version>3.4.0</version>
 				<!-- 수행되어야 할 명령어(npm) 상세 내용 추가 start -->
 				<!-- 나열된 순서대로 실행됨 -->
 				<executions>
