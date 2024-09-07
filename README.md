@@ -1,4 +1,4 @@
-### 빌드 실행
+### 백엔드 컴파일
 ```
 mvn install
 ```
@@ -15,7 +15,7 @@ git push -u origin main
 git log --branches --not --remotes
 ```
 
-### front-end 소스 컴파일
+### 화면(front-end 소스) 컴파일
 ```
 cd front-end
 npm run serve
