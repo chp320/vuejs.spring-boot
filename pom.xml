@@ -74,6 +74,200 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<!-- exec-maven-plugin 추가 -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.3.0</version>
+				<!-- 수행되어야 할 명령어(npm) 상세 내용 추가 start -->
+				<!-- 나열된 순서대로 실행됨 -->
+				<executions>
+
+					<!-- exec-maven-plugin 에게 npm install 명령어 실행하도록 noti -->
+					<execution>
+						<id>front-end install</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>install</argument>
+							</arguments>
+						</configuration>
+					</execution>
+
+					<!-- prepare-package 단계 동안 npm run test:unit 을 실행하기 위함 -->
+					<execution>
+						<id>front-end unit test</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>run</argument>
+								<argument>test:unit</argument>
+							</arguments>
+						</configuration>
+					</execution>
+
+					<!-- exec-maven-plugin 이 prepare-package 단계 동안 npm run build 명령어를 실행하기 위함 -->
+					<execution>
+						<id>front-end build package</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>run</argument>
+								<argument>build</argument>
+							</arguments>
+						</configuration>
+					</execution>
+
+					<!-- exec-maven-plugin 이 integration-test 단계 동안 npm run test:e2e 명령어 실행하기 위함 -->
+					<execution>
+						<id>front-end e2e test</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>integration-test</phase>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>run</argument>
+								<argument>test:e2e</argument>
+							</arguments>
+						</configuration>
+					</execution>
+
+				</executions>
+				<!--  수행되어야 할 명령어(npm) 상세 내용 추가 end  -->
+				<configuration>
+					<workingDirectory>${basedir}/front-end</workingDirectory>
+				</configuration>
+			</plugin>
+
+			<!-- Maven Resources Plugin 추가로 front-end 빌드 결과를 복사 (to...src/main/resources) -->
+			<!-- 
+					 스프링부트는 HTML 템플릿 파일을 src/main/resources/templates 폴더에 놓고
+					 정적 자원은 src/main/resources/static 폴더에 놓기 때문에
+					 front-end/dist/index.html 과 front-end/dist/static 을 분리한 뒤 두 개 execution 섹션을 활용해서 복사 진행
+			-->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+				<executions>
+
+					<!-- index.html 파일을 prepare-package 단계 동안 src/main/resources/templates 폴더로 복사 -->
+					<execution>
+						<id>copy front-end template</id>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<outputDirectory>${basedir}/src/main/resources/templates</outputDirectory>
+							<resources>
+								<resource>
+									<directory>front-end/dist</directory>
+									<includes>
+										<include>index.html</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+
+					<!-- static 폴더 전체를 src/main/resources/static 폴더로 복사 -->
+					<execution>
+						<id>copy front-end static assets</id>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<outputDirectory>${basedir}/src/main/resources/static</outputDirectory>
+							<resources>
+								<resource>
+									<directory>front-end/dist</directory>
+									<excludes>
+										<!-- 복사하는 동안 index.html 을 생략 -->
+										<exclude>index.html</exclude>
+									</excludes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+
+					<!-- front-end 의 assets 를 target/classes 디렉토리에 복사하기 위해 위의 2개 execution 과 다른 id, outputDirectory 설정 -->
+					<execution>
+						<id>copy front-end template to target</id>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<outputDirectory>${basedir}/target/classes/templates</outputDirectory>
+							<resources>
+								<resource>
+									<directory>front-end/dist</directory>
+									<includes>
+										<include>index.html</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>copy front-end static assets to target</id>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<outputDirectory>${basedir}/target/classes/static</outputDirectory>
+							<resources>
+								<resource>
+									<directory>front-end/dist</directory>
+									<excludes>
+										<exclude>index.html</exclude>
+									</excludes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+
+				</executions>
+			</plugin>
+
+			<!-- spring-boot 를 기동/종료하기 위한 spring-boot-maven-plugin -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>pre integration test</id>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>post integration test</id>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 
