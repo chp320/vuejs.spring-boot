@@ -14,3 +14,13 @@ git push -u origin main
 ```
 git log --branches --not --remotes
 ```
+
+### front-end 소스 컴파일
+```
+cd front-end
+npm run serve
+```
+##### 메모
+- npm run serve
+  -> vue-cli-service serve 명령어를 호출해서 개발 서버를 실행
+
